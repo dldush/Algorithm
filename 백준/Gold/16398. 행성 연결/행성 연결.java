@@ -1,93 +1,76 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
-public class Main { // 행성연결
-	
-	static class Node implements Comparable<Node>{
-		int from;
-		int to;
-		int value;
-		
-		public Node(int from, int to, int value) {
-			this.from = from;
+public class Main {
+
+	static class Edge implements Comparable<Edge> {
+		int to, value;
+
+		Edge(int to, int value) {
 			this.to = to;
 			this.value = value;
 		}
 
 		@Override
-		public int compareTo(Node o) {
+		public int compareTo(Edge o) {
 			return this.value - o.value;
 		}
-		
-	} // node end
-	
+	} // Edge end
+
 	static int V;
-	static int[] parent;
+	static boolean[] visited;
+	static List<Edge>[] list;
 	static int[][] planet;
-	static List<Node> list;
-	
+	static int count;
+
 	public static void main(String[] args) {
-		
+
 		Scanner sc = new Scanner(System.in);
-		
-		// var initiate
+		// initiate var
 		V = sc.nextInt();
-		parent = new int[V+1];
-		list = new ArrayList<>();
+		visited = new boolean[V];
+		list = new ArrayList[V];
 		planet = new int[V][V];
 		long sum = 0;
-		
-		// parent array initiate
-		for(int i = 0; i <= V; i++) {
-			parent[i] = i;
-		}
-		// input planet value
-		for(int r = 0; r < V; r++) {
-			for(int c = 0; c < V; c++) {
+
+		// input planet
+		for (int r = 0; r < V; r++) {
+			for (int c = 0; c < V; c++) {
 				planet[r][c] = sc.nextInt();
 			}
 		}
-		
-		// input Edge
-		for(int r = 0; r < V; r++) {
-			for(int c = 0; c < V; c++) {
-				if(r < c) {
-					list.add(new Node(r, c, planet[r][c]));
+
+		for (int r = 0; r < V; r++) {
+			list[r] = new ArrayList<>();
+			for (int c = 0; c < V; c++) {
+				list[r].add(new Edge(c, planet[r][c]));
+			}
+		}
+
+		// Prim
+		PriorityQueue<Edge> pq = new PriorityQueue<>();
+		pq.offer(new Edge(0, 0));
+
+		while (!pq.isEmpty()) {
+			Edge cur = pq.poll();
+			if (visited[cur.to]) {
+				continue;
+			}
+			visited[cur.to] = true;
+			sum += cur.value;
+
+			for (Edge next : list[cur.to]) {
+				if (!visited[next.to]) {
+					pq.offer(next);
 				}
 			}
+
 		}
-		
-		Collections.sort(list);
-		
-		for(int i = 0; i < list.size(); i++) {
-			Node node = list.get(i);
-			
-			if(find(node.from)!=find(node.to)) {
-				union(node.from, node.to);
-				sum += node.value;
-			}
-		}
-		
+
 		System.out.println(sum);
-		
-	} // main end
-	
-	static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
-		if(a != b) {
-			parent[b] = a;
-		}
+
 	}
-	
 
-	static int find(int a) {
-		if(a == parent[a]) {
-			return a;
-		}
-		return parent[a] = find(parent[a]);
-	} // find end
-
-} // class end
+}
