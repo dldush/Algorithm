@@ -50,15 +50,13 @@ public class Main {
 		int link = 0;
 		
 		for (int r = 0; r < N; r++) {
-			for (int c = r; c < N; c++) {
+			for (int c = 0; c < N; c++) {
 				if(visited[r]==true && visited[c]==true) {
 					start += map[r][c];
-					start += map[c][r];
 				}
 				
 				if(visited[r]==false && visited[c]==false) {
 					link += map[r][c];
-					link += map[c][r];
 				}
 			}
 		}
