@@ -1,32 +1,44 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 class Solution {
-
-    int[] dr = new int[]{-1, 1, 0, 0};
-    int[] dc = new int[]{0, 0, -1, 1};
-
+    
+    static int[] dr = {-1, 0, 1, 0};
+    static int[] dc = {0, -1, 0, 1};
+    static boolean[][] visited;
+    static int lr, lc;
+    static int[][] map;
+    
     public int solution(int[][] maps) {
-        int lr = maps.length;
-        int lc = maps[0].length;
-
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[]{0, 0, 1});
-
-        boolean[][] visited = new boolean[lr][lc];
-        visited[0][0] = true;
-
-        while (!queue.isEmpty()) {
-            int[] pos = queue.poll();
-            int r = pos[0], c = pos[1], dist = pos[2];
-
-            if (r == lr - 1 && c == lc - 1) return dist;
-
-            for (int i = 0; i < 4; i++) {
-                int nr = r + dr[i], nc = c + dc[i];
-                if (0 <= nr && nr < lr && 0 <= nc && nc < lc && maps[nr][nc] == 1 && !visited[nr][nc]) {
-                    queue.offer(new int[]{nr, nc, dist + 1});
+        
+        lr = maps.length;
+        lc = maps[0].length;
+        map = maps;
+        visited = new boolean[lr][lc];
+        int answer = bfs(0,0,1);
+        return answer;
+    }
+    
+    public int bfs(int r, int c, int dist) {
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {r,c,dist});
+        
+        while(!q.isEmpty()) {
+            int[] cur = q.poll();
+            int cr = cur[0];
+            int cc = cur[1];
+            int cd = cur[2];
+            
+            if(cr == (lr-1) && cc == (lc-1)) {
+                return cd;
+            }
+            
+            for(int i = 0; i < 4; i++) {
+                int nr = cr + dr[i];
+                int nc = cc + dc[i];
+                
+                if(nr >= 0 && nr < lr && nc >= 0 && nc < lc && map[nr][nc] == 1 && !visited[nr][nc]) {
                     visited[nr][nc] = true;
+                    q.offer(new int[] {nr, nc, cd+1});
                 }
             }
         }
