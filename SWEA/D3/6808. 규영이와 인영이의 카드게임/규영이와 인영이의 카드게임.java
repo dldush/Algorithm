@@ -14,11 +14,16 @@ public class Solution {
             for (int i = 0; i < 9; i++) gCards[i] = sc.nextInt();
 
             boolean[] has = new boolean[19];
-            for (int v : gCards) has[v] = true;
+
+            for (int v : gCards) {
+                has[v] = true;
+            }
 
             iCards = new int[9];
             int idx = 0;
-            for (int v = 1; v <= 18; v++) if (!has[v]) iCards[idx++] = v;
+            for (int v = 1; v <= 18; v++) {
+                if (!has[v]) iCards[idx++] = v;
+            }
 
             used = new boolean[9];
             winCnt = 0;
@@ -31,15 +36,23 @@ public class Solution {
     }
 
     static void check(int depth, int gScore, int iScore) {
+
+        // base
         if (depth == 9) {
-            if (gScore > iScore) winCnt++;
-            else if (gScore < iScore) loseCnt++;
+            if (gScore > iScore) {
+                winCnt++;
+            } else if (gScore < iScore) {
+                loseCnt++;
+            }
             return;
         }
 
         // permutation
         for (int j = 0; j < 9; j++) {
-            if (used[j]) continue;
+            if (used[j]) {
+                continue;
+            }
+
             used[j] = true;
 
             int sum = gCards[depth] + iCards[j];
