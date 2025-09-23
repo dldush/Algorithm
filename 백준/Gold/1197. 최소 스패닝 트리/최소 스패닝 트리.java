@@ -1,82 +1,73 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int[] parents;
 
-	static class Node implements Comparable<Node> {
-		int start;
-		int end;
-		int value;
+    static class Edge implements Comparable<Edge>{
+        int start;
+        int end;
+        int val;
 
-		public Node(int start, int end, int value) {
-			this.start = start;
-			this.end = end;
-			this.value = value;
-		}
+        public Edge(int start, int end, int val) {
+            this.start = start;
+            this.end = end;
+            this.val = val;
+        }
 
-		@Override
-		public int compareTo(Node o) {
-			return this.value - o.value;
-		}
-	} // node end
+        @Override
+        public int compareTo(Edge o) {
+            return this.val - o.val;
+        }
+    }
 
-	static int V, E;
-	static int[] parent;
-	static List<Node> list;
+    static void union(int a, int b) {
+        int ap = find(a);
+        int bp = find(b);
+        if (ap != bp) parents[bp] = ap;
+    }
 
-	public static void main(String[] args) {
+    static int find(int a) {
+        if (parents[a] == a) return a;
+        else return parents[a] = find(parents[a]);
+    }
 
-		Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		V = sc.nextInt();
-		E = sc.nextInt();
-		list = new ArrayList<>();
-		parent = new int[V + 1];
+        int v = Integer.parseInt(st.nextToken());
+        int e = Integer.parseInt(st.nextToken());
 
-		for (int i = 0; i <= V; i++) {
-			parent[i] = i;
-		}
+        parents = new int[v + 1];
+        for (int i = 1; i <= v; i++) parents[i] = i;
 
-		for (int i = 0; i < E; i++) {
-			int start = sc.nextInt();
-			int end = sc.nextInt();
-			int value = sc.nextInt();
+        List<Edge> list = new ArrayList<>();
 
-			list.add(new Node(start, end, value));
-		}
+        for (int i = 0; i < e; i++) {
+            st = new StringTokenizer(br.readLine());
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int val = Integer.parseInt(st.nextToken());
 
-		Collections.sort(list);
+            list.add(new Edge(start, end, val));
+        }
 
-		int sum = 0;
+        Collections.sort(list);
 
-		for (int i = 0; i < list.size(); i++) {
-			Node node = list.get(i);
+        int sum = 0;
 
-			if (find(node.start) != find(node.end)) {
-				union(node.start, node.end);
-				sum += node.value;
-			}
-		}
-
-		System.out.println(sum);
-
-	} // main end
-
-	static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
-		if (a != b) {
-			parent[b] = a;
-		}
-	}
-
-	static int find(int a) {
-		if (a == parent[a]) {
-			return a;
-		}
-		return parent[a] = find(parent[a]);
-	}
-
-} // class end
+        for (Edge edge : list) {
+            if (find(edge.start) != find(edge.end)) {
+                union(edge.start, edge.end);
+                sum += edge.val;
+            }
+        }
+        System.out.println(sum);
+    }
+}
